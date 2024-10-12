@@ -45,7 +45,7 @@ void injected_thread()
             float abspos_z = enemy->o.z - local_player->o.z;
 
             float temp_distance = euclidean_distance(abspos_x, abspos_y);
-            if (closest_player == -1.0f || temp_distance < closest_player)
+            if (closest_player == -1.0f || temp_distance < closest_player) // compares last loops enemy to new loop enemy seeing if closer 
                 closest_player = temp_distance;
 
             // Calculate the yaw
