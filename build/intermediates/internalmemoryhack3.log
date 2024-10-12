@@ -1,8 +1,8 @@
 ﻿  dllmain.cpp
   Generating code
-  2 of 5 functions (40.0%) were compiled, the rest were copied from previous compilation.
+  1 of 5 functions (20.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   internalmemoryhack3.vcxproj -> C:\Users\schwarztoter\source\repos\internalmemoryhack3\build\internalmemoryhack3.dll
   'pwsh.exe' is not recognized as an internal or external command,

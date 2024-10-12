@@ -1,4 +1,4 @@
-#include "constants.h"
+#include "classes.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -14,15 +14,18 @@ void injected_thread()
 
         // These variables will be used to hold the closest enemy to us
         float closest_player = -1.0f;
-        float closest_yaw = 0.0f;
-        float closest_pitch = 0.0f;
+        float closest_yaw = NULL;
+        float closest_pitch = NULL;
 
         HMODULE hModule = GetModuleHandle(nullptr);
         uintptr_t exe_base_address = (uintptr_t)GetModuleHandle(nullptr);
         Player* local_player = *(Player**)(exe_base_address + 0x17E0A8);
         int num_players = *(int*)(exe_base_address + 0x191FD4);
 
-        for (int i = 1; i < num_players; i++)
+        if (!GetAsyncKeyState(VK_XBUTTON2))
+            continue;
+
+        for (int i = 1; i < num_players + 1; i++)
         {
 
             DWORD* entity_list = (DWORD*)(exe_base_address + 0x18AC04);
@@ -35,11 +38,11 @@ void injected_thread()
             if (enemy->health > 100 || enemy->health <= 0)
                 continue;
 
-            float abspos_x = enemy->pos.x - local_player->pos.x;
+            float abspos_x = enemy->o.x - local_player->o.x;
 
-            float abspos_y = enemy->pos.y - local_player->pos.y;
+            float abspos_y = enemy->o.y - local_player->o.y;
 
-            float abspos_z = enemy->pos.z - local_player->pos.z;
+            float abspos_z = enemy->o.z - local_player->o.z;
 
             float temp_distance = euclidean_distance(abspos_x, abspos_y);
             if (closest_player == -1.0f || temp_distance < closest_player)
@@ -51,6 +54,7 @@ void injected_thread()
             float yaw = (float)(azimuth_xy * (180.0 / M_PI));
             // Add 90 since the game assumes direct north is 90 degrees
             closest_yaw = yaw + 90;
+            // don't look straight at the air when close to an enemy
 
             // Calculate the pitch
             // Since Z values are so limited, pick the larger between x and y to ensure that we 
@@ -64,16 +68,20 @@ void injected_thread()
                 }
                 abspos_y = abspos_x;
             }
+
             float azimuth_z = atan2f(abspos_z, abspos_y);
             // Covert the value to degrees
             closest_pitch = (float)(azimuth_z * (180.0 / M_PI));
 
         }
 
+        if (closest_pitch == NULL || closest_yaw == NULL)
+            continue;
+
         local_player->pitch = closest_pitch;
         local_player->yaw = closest_yaw;
        
-        Sleep(10);
+        Sleep(1);
     }
 }
 
